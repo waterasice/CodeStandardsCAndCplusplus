@@ -100,7 +100,7 @@
 下面的规则将引导你规避使用头文件时的各种陷阱.
 
 ## 2.1. #define保护
-**[Mandatory]** 所有头文件都应该使用 #define 防止头文件被多重包含, 命名格式: 
+:exclamation: **[Mandatory]** 所有头文件都应该使用 #define 防止头文件被多重包含, 命名格式: 
 ```
 #ifndef BAZ_H
 #define BAZ_H
@@ -108,17 +108,17 @@
 #endif // BAZ_H
 ```
 ## 2.2. 头文件依赖
-**[Mandatory]** 能用前置声明的地方尽量不使用 #include.
+:exclamation: **[Mandatory]** 能用前置声明的地方尽量不使用 #include.
 因为头文件的任何改变都将导致所有包含了该头文件的代码被重新编译. 因此, 我们倾向于减少包含头文件, 尤其是在头文件中包含头文件.使用前置声明可以显著减少需要包含的头文件数量.
  
 举例说明: 
 如果头文件中用到类 File, 但不需要访问 File 类的声明, 头文件中只需前置声明 class File; 而无须 #include "file/base/file.h".
 ## 2.3. 内联函数
-**[Mandatory]** 只有当函数只有 10 行甚至更少时才将其定义为内联函数.
+:exclamation: **[Mandatory]** 只有当函数只有 10 行甚至更少时才将其定义为内联函数.
 ## 2.4. 函数参数的顺序
-**[Mandatory]** 声明函数时, 参数顺序依次为: 输入参数, 然后是输出参数.
+:exclamation: **[Mandatory]** 声明函数时, 参数顺序依次为: 输入参数, 然后是输出参数.
 ## 2.5. #include 的路径及顺序
-**[Mandatory]** 使用标准的头文件包含顺序可增强可读性, 避免隐藏依赖: C 库, C++ 库, 其他库的 .h, 本项目内的 .h.
+:exclamation: **[Mandatory]** 使用标准的头文件包含顺序可增强可读性, 避免隐藏依赖: C 库, C++ 库, 其他库的 .h, 本项目内的 .h.
 按字母顺序对头文件包含进行二次排序是不错的主意。
 如下, project/src/foo/internal/fooserver.cc 的包含次序: 
 ```
@@ -129,24 +129,24 @@
 ```
 # 3. 作用域
 ## 3.1. 局部变量
-**[Mandatory]** 将函数变量尽可能置于最小作用域内, 并在变量声明时进行初始化.
+:exclamation: **[Mandatory]** 将函数变量尽可能置于最小作用域内, 并在变量声明时进行初始化.
 ## 3.2. 静态和全局变量
-**[Mandatory]** 禁止使用 class 类型的静态或全局变量: 它们会导致很难发现的 bug 和不确定的构造和析构函数调用顺序.
+:exclamation: **[Mandatory]** 禁止使用 class 类型的静态或全局变量: 它们会导致很难发现的 bug 和不确定的构造和析构函数调用顺序.
 
 注：上面提及的静态变量泛指静态生存周期的对象, 包括: 全局变量, 静态变量, 静态类成员变量, 以及函数静态变量.
 # 4. 类
 ## 4.1. 构造函数的职责
-[Optional]构造函数中只进行那些没什么意义的初始化, 可能的话, 使用 init() 方法集中初始化有意义的 (non-trivial) 数据.构造函数中很难上报错误, 不能使用异常. 
+:grey_exclamation: [Optional]构造函数中只进行那些没什么意义的初始化, 可能的话, 使用 init() 方法集中初始化有意义的 (non-trivial) 数据.构造函数中很难上报错误, 不能使用异常. 
 操作失败会造成对象初始化失败，进入不确定状态.如果在构造函数内调用了自身的虚函数, 这类调用是不会重定向到子类的虚函数实现. 即使当前没有子类化实现, 将来仍是隐患. 
 如果有人创建该类型的全局变量, 构造函数将先 main() 一步被调用, 有可能破坏构造函数中暗含的假设条件.
 ## 4.2. 默认构造函数
-**[Mandatory]** 如果一个类定义了若干成员变量又没有其它构造函数, 必须定义一个默认构造函数. 否则编译器将自动生产一个很糟糕的默认构造函数.
+:exclamation: **[Mandatory]** 如果一个类定义了若干成员变量又没有其它构造函数, 必须定义一个默认构造函数. 否则编译器将自动生产一个很糟糕的默认构造函数.
 如果类中定义了成员变量, 而且没有提供其它构造函数, 你必须定义一个 (不带参数的) 默认构造函数. 把对象的内部状态初始化成一致/有效的值无疑是更合理的方式.
 ## 4.3. 显式构造函数
-**[Mandatory]** 对单个参数的构造函数使用 C++ 关键字 explicit.
+:exclamation: **[Mandatory]** 对单个参数的构造函数使用 C++ 关键字 explicit.
 通常, 如果构造函数只有一个参数, 可看成是一种隐式转换. 打个比方, 如果你定义了 Foo::Foo(string name), 接着把一个字符串传给一个以 Foo 对象为参数的函数, 构造函数 Foo::Foo(string name) 将被调用, 并将该字符串转换为一个 Foo 的临时对象传给调用函数. 看上去很方便, 但如果你并不希望如此通过转换生成一个新对象的话, 麻烦也随之而来. 为避免构造函数被调用造成隐式转换, 可以将其声明为 explicit. 
 ## 4.4. 拷贝构造函数
-**[Mandatory]** 仅在需要拷贝一个类对象的时候使用拷贝构造函数，其他情况下禁用拷贝构造函数.
+:exclamation: **[Mandatory]** 仅在需要拷贝一个类对象的时候使用拷贝构造函数，其他情况下禁用拷贝构造函数.
 C++ 中的隐式对象拷贝是很多性能问题和 bug 的根源. 拷贝构造函数降低了代码可读性, 相比传引用, 跟踪传值的对象更加困难, 对象修改的地方变得难以捉摸.
 大部分类并不需要可拷贝, 也不需要一个拷贝构造函数或重载赋值运算符. 不幸的是, 如果你不主动声明它们, 编译器会为你自动生成, 而且是 public 的.
 
@@ -157,7 +157,7 @@ TypeName(const TypeName&);
 void operator=(const TypeName&)
 ```
 ## 4.5. 结构体 VS. 类
-[Optional]仅当只有数据时使用 struct, 其它一概使用 class.
+:grey_exclamation: [Optional]仅当只有数据时使用 struct, 其它一概使用 class.
 在 C++ 中 struct 和 class 关键字几乎含义一样. 我们为这两个关键字添加我们自己的语义理解, 以便为定义的数据类型选择合适的关键字.
 
 struct 用来定义包含数据的被动式对象, 也可以包含相关的常量, 但除了存取数据成员之外, 没有别的函数功能. 并且存取功能是通过直接访问位域 (field), 而非函数调用. 除了构造函数, 析构函数, Initialize(), Reset(), Validate() 外, 不能提供其它功能的函数.
@@ -166,25 +166,25 @@ struct 用来定义包含数据的被动式对象, 也可以包含相关的常�
 
 为了和 STL 保持一致, 对于仿函数 (functors) 和特性 (traits) 可以不用 class 而是使用 struct.
 ## 4.6. 继承
-[Optional]使用组合常常比使用继承更合理.
+:grey_exclamation: [Optional]使用组合常常比使用继承更合理.
 不要过度使用实现继承. 组合常常更合适一些. 尽量做到只在 “是一个” 的情况下使用继承: 如果 Bar 的确 “是一种” Foo, Bar 才能继承 Foo.
 
 必要的话, 析构函数声明为 virtual. 如果你的类有虚函数, 则析构函数也应该为虚函数. 注意 数据成员在任何情况下都必须是私有的.
 
 当重载一个虚函数, 在衍生类中把它明确的声明为 virtual. 理论依据: 如果省略 virtual 关键字, 代码阅读者不得不检查所有父类, 以判断该函数是否是虚函数.
 ## 4.7. 多重继承
-**[Mandatory]** 真正需要用到多重实现继承的情况少之又少. 只在以下情况我们才允许多重继承: 最多只有一个基类是非抽象类; 其它基类都是以 Interface 为后缀的纯接口类.
+:exclamation: **[Mandatory]** 真正需要用到多重实现继承的情况少之又少. 只在以下情况我们才允许多重继承: 最多只有一个基类是非抽象类; 其它基类都是以 Interface 为后缀的纯接口类.
 ## 4.8. 运算符重载
-[Optional]除少数特定环境外，不要重载运算符.
+:grey_exclamation: [Optional]除少数特定环境外，不要重载运算符.
 ## 4.9. 存取控制
-[Optional]将所有数据成员声明为 private, 并根据需要提供相应的存取函数. 
+:grey_exclamation: [Optional]将所有数据成员声明为 private, 并根据需要提供相应的存取函数. 
 
 如：某个名为 foo的变量, 其取值函数是 foo(). 还可能需要一个赋值函数 setFoo().
 
 注：一般在头文件中把存取函数定义成内联函数.
 
 ## 4.10. 声明顺序
-[Optional]在类中使用特定的声明顺序: public: 在 private: 之前, 成员函数在数据成员 (变量) 前. 
+:grey_exclamation: [Optional]在类中使用特定的声明顺序: public: 在 private: 之前, 成员函数在数据成员 (变量) 前. 
 
 类的访问控制区段的声明顺序依次为: public:, protected:, private:. 如果某区段没内容, 可以不声明.
 
@@ -200,27 +200,27 @@ struct 用来定义包含数据的被动式对象, 也可以包含相关的常�
 .cpp 文件中函数的定义应尽可能和声明顺序一致.
 # 5. 智能指针
 ## 5.1. 智能指针
-[Optional]不推荐使用智能指针，除非有使用它的合理理由，比如该解决方案最简单有效.
+:grey_exclamation: [Optional]不推荐使用智能指针，除非有使用它的合理理由，比如该解决方案最简单有效.
 # 6. 其他C++特性
 ## 6.1. 变量
-**[Mandatory]** 变量必须被初始化.
+:exclamation: **[Mandatory]** 变量必须被初始化.
 ## 6.2. 引用参数
-**[Mandatory]** 函数的输入参数传引用的时候必须使用const引用, 输出参数或输入/输出参数使用非-const 指针.
+:exclamation: **[Mandatory]** 函数的输入参数传引用的时候必须使用const引用, 输出参数或输入/输出参数使用非-const 指针.
 ## 6.3. 缺省参数
-**[Mandatory]** 我们不允许使用缺省函数参数.
+:exclamation: **[Mandatory]** 我们不允许使用缺省函数参数.
 所有参数必须明确指定, 迫使程序员理解 API 和各参数值的意义, 避免默默使用他们可能都还没意识到的缺省参数. 
 ## 6.4. 变长数组和 alloca()
-**[Mandatory]** 我们不允许使用变长数组和 alloca().
+:exclamation: **[Mandatory]** 我们不允许使用变长数组和 alloca().
 ## 6.5. 友元
-[Optional]我们允许合理的使用友元类及友元函数.
+:grey_exclamation: [Optional]我们允许合理的使用友元类及友元函数.
 
 通常友元应该定义在同一文件内, 避免代码读者跑到其它文件查找使用该私有成员的类. 经常用到友元的一个地方是将 FooBuilder 声明为 Foo 的友元, 以便 FooBuilder 正确构造 Foo 的内部状态, 而无需将该状态暴露出来. 某些情况下, 将一个单元测试类声明成待测类的友元会很方便.
 
 友元扩大了 (但没有打破) 类的封装边界. 某些情况下, 相对于将类成员声明为 public, 使用友元是更好的选择, 尤其是如果你只允许另一个类访问该类的私有成员时. 当然, 大多数类都只应该通过其提供的公有成员进行互操作.
 ## 6.6. 异常
-**[Mandatory]** 禁止使用 C++ 异常.
+:exclamation: **[Mandatory]** 禁止使用 C++ 异常.
 ## 6.7. 类型转换
-**[Mandatory]** 使用 C++ 的类型转换, 如 static_cast<>(). 不要使用 int y = (int)x 或 int y = int(x) 等转换方式;
+:exclamation: **[Mandatory]** 使用 C++ 的类型转换, 如 static_cast<>(). 不要使用 int y = (int)x 或 int y = int(x) 等转换方式;
 
 用 static_cast 替代 C 风格的值转换, 或某个类指针需要明确的向上转换为父类指针时. 
 
@@ -230,24 +230,24 @@ struct 用来定义包含数据的被动式对象, 也可以包含相关的常�
 
 dynamic_cast 测试代码以外不要使用. 除非是单元测试, 如果你需要在运行时确定类型信息, 说明有设计缺陷. 
 ## 6.8. 流
-[Optional]只在记录日志时使用流.
+:grey_exclamation: [Optional]只在记录日志时使用流.
 作为替代方案，使用printf + read/write。
 
 流最大的优势是在输出时不需要关心打印对象的类型. 这是一个亮点. 同时, 也是一个不足: 你很容易用错类型, 而编译器不会报警.
 ## 6.9. 前置自增和自减
-[Optional]对于迭代器和其他模板对象使用前缀形式 (++i) 的自增, 自减运算符.
+:grey_exclamation: [Optional]对于迭代器和其他模板对象使用前缀形式 (++i) 的自增, 自减运算符.
 
 不考虑返回值的话, 前置自增 (++i) 通常要比后置自增 (i++) 效率更高. 因为后置自增 (或自减) 需要对表达式的值 i 进行一次拷贝. 如果 i 是迭代器或其他非数值类型, 拷贝的代价是比较大的. 既然两种自增方式实现的功能一样, 为什么不总是使用前置自增呢? 
 
 ## 6.10. const 的使用
-[Optional]我们强烈建议你在任何可能的情况下都要使用 const.
+:grey_exclamation: [Optional]我们强烈建议你在任何可能的情况下都要使用 const.
 
 在声明的变量或参数前加上关键字 const 用于指明变量值不可被篡改 (如 const int foo ). 为类中的函数加上 const 限定符表明该函数不会修改类成员变量的状态 (如 class Foo { int Bar(char c) const; };). 
 
 const 变量, 数据成员, 函数和参数为编译时类型检测增加了一层保障; 便于尽早发现错误. 因此, 我们强烈建议在任何可能的情况下使用 const:
 
 ## 6.11. 整型
-[Optional]不要使用 uint32_t 等无符号整型, 除非是在表示一个位组而不是一个数值, 或是需要定义二进制补码溢出. 尤其是不要为了指出数值永不会为负, 而使用无符号类型. 相反, 应该使用断言来保护数据.
+:grey_exclamation: [Optional]不要使用 uint32_t 等无符号整型, 除非是在表示一个位组而不是一个数值, 或是需要定义二进制补码溢出. 尤其是不要为了指出数值永不会为负, 而使用无符号类型. 相反, 应该使用断言来保护数据.
 
 看看下面的例子: 
 ```
@@ -257,7 +257,7 @@ for (unsigned int i = foo.Length()-1; i >= 0; --i) ...
 
 因此, 使用断言来指出变量为非负数, 而不是使用无符号型!
 ## 6.12. 预处理宏
-[Optional]使用宏时要非常谨慎, 尽量以内联函数, 枚举和常量代替之.
+:grey_exclamation: [Optional]使用宏时要非常谨慎, 尽量以内联函数, 枚举和常量代替之.
 
 宏意味着阅读者和编译器看到的代码是不同的. 这可能会导致异常行为, 尤其因为宏具有全局作用域.
 
@@ -272,39 +272,39 @@ for (unsigned int i = foo.Length()-1; i >= 0; --i) ...
 
 注：在使用前, 仔细考虑一下能不能不使用宏达到同样的目的, 同时给出非用不可的理由.
 ## 6.13. 0 和 NULL
-**[Mandatory]** 整数用 0, 实数用 0.0, 指针用 NULL, 字符 (串) 用 '\0'.
+:exclamation: **[Mandatory]** 整数用 0, 实数用 0.0, 指针用 NULL, 字符 (串) 用 '\0'.
 
 对于指针 (地址值), 到底是用 0 还是 NULL, 使用看上去像是指针的 NULL, 事实上一些 C++ 编译器对 NULL 进行了特殊的定义, 可以给出有用的警告信息, 尤其是 sizeof(NULL) 和 sizeof(0) 不相等的情况.
 ## 6.14. Boost 库
-**[Mandatory]** 目前禁止使用 Boost 库.
+:exclamation: **[Mandatory]** 目前禁止使用 Boost 库.
 # 7. 命名约定
 一致性的命名规则能快速获知名字代表是类型, 变量, 函数, 常量, 宏 ... ? 甚至不需要去查找类型声明.
 
 ## 7.1. 通用命名规则
-**[Mandatory]** 函数命名, 变量命名, 文件命名应具备描述性; 
+:exclamation: **[Mandatory]** 函数命名, 变量命名, 文件命名应具备描述性; 
 
-**[Mandatory]** 不要过度缩写.
+:exclamation: **[Mandatory]** 不要过度缩写.
 
-**[Mandatory]** 类型和变量应该是名词
+:exclamation: **[Mandatory]** 类型和变量应该是名词
 
-**[Mandatory]** 函数名可以用 “命令性” 动词.
+:exclamation: **[Mandatory]** 函数名可以用 “命令性” 动词.
 
 函数名通常是指令性的 (确切的说它们应该是命令), 如 openFile(), setNumErrors().取值函数是个特例 (在 下面函数命名处详细阐述).
 ## 7.2. 文件命名
-**[Mandatory]** 文件名使用帕斯卡命名法(注：禁止下划线).
+:exclamation: **[Mandatory]** 文件名使用帕斯卡命名法(注：禁止下划线).
 
 如文件: MyUsefulClass.cpp
 
 注：禁止下划线
 
-**[Mandatory]** C++ 文件要以 .cpp 结尾, 头文件以 .h 结尾.
+:exclamation: **[Mandatory]** C++ 文件要以 .cpp 结尾, 头文件以 .h 结尾.
 
-**[Mandatory]** 定义类时文件名一般成对出现,
+:exclamation: **[Mandatory]** 定义类时文件名一般成对出现,
 
 如 FooBar.h 和 FooBar.cc, 对应于类 FooBar.
 
 ## 7.3. 类型命名
-**[Mandatory]** 类型名称使用帕斯卡命名法(注：禁止下划线).
+:exclamation: **[Mandatory]** 类型名称使用帕斯卡命名法(注：禁止下划线).
 
 如: MyExcitingClass, MyExcitingEnum.
 
@@ -322,28 +322,28 @@ typedef hash_map<UrlTableProperties *, string> PropertiesMap;
 enum UrlTableErrors { ...
 ```
 ## 7.4. 变量命名
-**[Mandatory]** 变量名使用小驼峰式命名法(注：禁止下划线).
+:exclamation: **[Mandatory]** 变量名使用小驼峰式命名法(注：禁止下划线).
 
 如：myExcitingLocalVariable
 
-**[Mandatory]** 变量名如果是指针类型，首字母应该使用小写字母’p’；
+:exclamation: **[Mandatory]** 变量名如果是指针类型，首字母应该使用小写字母’p’；
 
 如：int *pMyExcitingLocalVariable;
 
-**[Mandatory]** 变量名如果是指针的指针类型，开始两个字母应该使用’pp’；
+:exclamation: **[Mandatory]** 变量名如果是指针的指针类型，开始两个字母应该使用’pp’；
 如：int **ppMyExcitingLocalVariable;
 
 
-**[Mandatory]** 变量名如果是引用类型，首字母应该使用小写字母’r’；
+:exclamation: **[Mandatory]** 变量名如果是引用类型，首字母应该使用小写字母’r’；
 
 如：int &rMyExcitingLocalVariable;
 
-**[Mandatory]** 变量名如果是类的成员变量，变量名应该以’M’(member)字符结尾.
+:exclamation: **[Mandatory]** 变量名如果是类的成员变量，变量名应该以’M’(member)字符结尾.
 
 如：int &rMyExcitingLocalVariableM;
 这也防止了局部变量与公共变量同名。
 
-**[Mandatory]** 结构体的数据成员和普通变量一样, 不用像类那样加’M’字符: 
+:exclamation: **[Mandatory]** 结构体的数据成员和普通变量一样, 不用像类那样加’M’字符: 
 ```
 struct UrlTableProperties 
 {
@@ -351,17 +351,17 @@ struct UrlTableProperties
     int numOfEntries;
 }
 ```
-**[Mandatory]** 全局变量少用就好（如果使用，必须说明理由）, 如果要用, 可以用 ‘g’字符为前缀, 以便更好的区分局部变量. 
+:exclamation: **[Mandatory]** 全局变量少用就好（如果使用，必须说明理由）, 如果要用, 可以用 ‘g’字符为前缀, 以便更好的区分局部变量. 
 ## 7.5. 函数参数命名
-**[Mandatory]** 函数的参数首字母小写，其他单词的首字母大写，并以大写字母’P’结尾.
+:exclamation: **[Mandatory]** 函数的参数首字母小写，其他单词的首字母大写，并以大写字母’P’结尾.
 
 这同样防止了局部变量与函数参数变量同名。
 ## 7.6. 函数命名
-**[Mandatory]** 函数名使用小驼峰式命名法(注：禁止下划线).
+:exclamation: **[Mandatory]** 函数名使用小驼峰式命名法(注：禁止下划线).
 
 如：addTableEntry()
 
-**[Mandatory]** 取值和设值函数则要求与变量名匹配.
+:exclamation: **[Mandatory]** 取值和设值函数则要求与变量名匹配.
 
 如：
 ```
@@ -369,14 +369,14 @@ int numEntries() const { return numEntriesM; }
 void setNumEntries(int numEntriesP) { numEntriesM = numEntriesP; }
 ```
 ## 7.7. 枚举值命名
-**[Mandatory]** 枚举类型的值应该全部大写，单词之间使用下划线.
+:exclamation: **[Mandatory]** 枚举类型的值应该全部大写，单词之间使用下划线.
 ## 7.8. 宏命名
-**[Mandatory]** 宏应该全部大写，单词之间使用下划线.
+:exclamation: **[Mandatory]** 宏应该全部大写，单词之间使用下划线.
 # 8. 注释
 ## 8.1. 注释风格
-[Optional]使用 // 或 /* */都可以.
+:grey_exclamation: [Optional]使用 // 或 /* */都可以.
 ## 8.2. 文件注释
-**[Mandatory]** 在每一个文件开头加入版权公告, 内容描述以及日期.
+:exclamation: **[Mandatory]** 在每一个文件开头加入版权公告, 内容描述以及日期.
 ```
 /**
 	Copyright (C) 2017 CSG. All Rights Reserved.
@@ -387,9 +387,9 @@ void setNumEntries(int numEntriesP) { numEntriesM = numEntriesP; }
 ```
 通常, .h 文件要对所声明的类的功能和用法作简单说明. .cpp 文件通常包含了更多的实现细节或算法技巧讨论.
 ## 8.3. 实现注释
-[Optional]对于代码中巧妙的, 晦涩的, 有趣的, 重要的地方加以注释.
+:grey_exclamation: [Optional]对于代码中巧妙的, 晦涩的, 有趣的, 重要的地方加以注释.
 ## 8.4. TODO 注释
-**[Mandatory]** 对那些临时的, 短期的解决方案, 或已经够好但仍不完美的代码使用 @TODO 注释.
+:exclamation: **[Mandatory]** 对那些临时的, 短期的解决方案, 或已经够好但仍不完美的代码使用 @TODO 注释.
 @TODO 注释要使用全大写的字符串 @TODO, 在随后的圆括号里写上你的大名, 邮件地址, 或其它身份标识. 冒号是可选的. 
 ```
 // @TODO(xxx@csg.com.cn): Remove this code when all clients are implemented.
@@ -397,11 +397,11 @@ void setNumEntries(int numEntriesP) { numEntriesM = numEntriesP; }
 # 9. 格式
 代码风格和格式确实比较随意, 但一个项目中所有人遵循同一风格是非常容易的. 个体未必同意下述每一处格式规则, 但整个项目服从统一的编程风格是很重要的, 只有这样才能让所有人能很轻松的阅读和理解代码.
 ## 9.1. 行长度
-[Optional]每一行代码字符数尽量不超过 80.
+:grey_exclamation: [Optional]每一行代码字符数尽量不超过 80.
 ## 9.2. 空格还是制表位
-**[Mandatory]** 只使用空格, 每次缩进 4 个空格.
+:exclamation: **[Mandatory]** 只使用空格, 每次缩进 4 个空格.
 ## 9.3. 函数声明与定义
-**[Mandatory]** 函数声明与定义应该注意:
+:exclamation: **[Mandatory]** 函数声明与定义应该注意:
 
 - 返回类型和函数名在同一行, 参数也尽量放在同一行; 
 - 返回值总是和函数名在同一行; 
@@ -417,7 +417,7 @@ void setNumEntries(int numEntriesP) { numEntriesM = numEntriesP; }
 
 
 ## 9.4. 函数调用
-**[Mandatory]** 函数调用应该注意:
+:exclamation: **[Mandatory]** 函数调用应该注意:
 
 - 尽量放在同一行.
 - 如果同一行放不下, 可断为多行, 后面每一行都和第一个实参对齐.
@@ -425,11 +425,11 @@ void setNumEntries(int numEntriesP) { numEntriesM = numEntriesP; }
 - 如果函数参数很多, 出于可读性的考虑可以在每行只放一个参数: 
 
 ## 9.5. 条件语句
-**[Mandatory]** 条件关键字和左圆括号间必须有空格.
+:exclamation: **[Mandatory]** 条件关键字和左圆括号间必须有空格.
 
-**[Mandatory]** 关键字 else 另起一行.
+:exclamation: **[Mandatory]** 关键字 else 另起一行.
 
-**[Mandatory]** 有可能的话，if语句尽量加上else分支，如果确实没有else分支必须加上注释以显式表明已考虑过else分支逻辑。
+:exclamation: **[Mandatory]** 有可能的话，if语句尽量加上else分支，如果确实没有else分支必须加上注释以显式表明已考虑过else分支逻辑。
 如:
 ```
 if (this_one_thing > this_other_thing)
@@ -437,29 +437,29 @@ if (this_one_thing > this_other_thing)
 ...
 } // otherwise do nothing
 ```
-**[Mandatory]** 单行语句也必须使用大括号
+:exclamation: **[Mandatory]** 单行语句也必须使用大括号
 ## 9.6. 循环和开关选择语句
-**[Mandatory]** switch 语句可以使用大括号分段.
+:exclamation: **[Mandatory]** switch 语句可以使用大括号分段.
 
-**[Mandatory]** switch 应该总是包含一个 default 匹配, 如果 default 应该永远执行不到, 简单的加条 assert.
+:exclamation: **[Mandatory]** switch 应该总是包含一个 default 匹配, 如果 default 应该永远执行不到, 简单的加条 assert.
 
-**[Mandatory]** 空循环体应使用 {} 或 continue，而不是一个简单的分号.
+:exclamation: **[Mandatory]** 空循环体应使用 {} 或 continue，而不是一个简单的分号.
 ## 9.7. 指针和引用表达式
-**[Mandatory]** 句点或箭头前后不要有空格. 指针/地址操作符 (*, &) 之后不能有空格.
+:exclamation: **[Mandatory]** 句点或箭头前后不要有空格. 指针/地址操作符 (*, &) 之后不能有空格.
  
-[Optional]在声明指针变量或参数时, 星号与类型或变量名紧挨都可以: 
+:grey_exclamation: [Optional]在声明指针变量或参数时, 星号与类型或变量名紧挨都可以: 
 ```
 如：char *c; char* c;
 ```
 
 ## 9.8. 变量定义
-[Optional]多个相同类型的变量定义应该分行。
+:grey_exclamation: [Optional]多个相同类型的变量定义应该分行。
 ```
 int a；
 int b；
 ```
 ## 9.9. 布尔表达式
-**[Mandatory]** 如果一个布尔表达式超过标准行宽, 要在低优先级操作符处划分新行，操作符放在新行之首.
+:exclamation: **[Mandatory]** 如果一个布尔表达式超过标准行宽, 要在低优先级操作符处划分新行，操作符放在新行之首.
 如：
 
 ```
@@ -468,57 +468,57 @@ if (this_one_thing > this_other_thing
         && a_third_thing == a_fourth_thing) 
 ```
 ## 9.10. 函数返回值
-[Optional]return 表达式中不要用圆括号包围.
+:grey_exclamation: [Optional]return 表达式中不要用圆括号包围.
 ## 9.11. 预处理指令
-**[Mandatory]** 预处理指令不要缩进, 从行首开始.
+:exclamation: **[Mandatory]** 预处理指令不要缩进, 从行首开始.
 ## 9.12. 初始化列表
-**[Mandatory]** 构造函数初始化列表按四格缩进并排几行.
+:exclamation: **[Mandatory]** 构造函数初始化列表按四格缩进并排几行.
 # 10. 效率
-**[Mandatory]** 在嵌套循环中，应将最忙的循环放在最内层.
+:exclamation: **[Mandatory]** 在嵌套循环中，应将最忙的循环放在最内层.
 
 注：有助于提高效率。
 
-**[Mandatory]** 应该避免循环体内包含判断语句
+:exclamation: **[Mandatory]** 应该避免循环体内包含判断语句
 
 注：有可能的话，应尽可能将循环语句置于判断语句的代码块之中，以提高效率。
 
 # 11. 设计
 ## 11.1. 运行时类型识别
-**[Mandatory]** 禁止使用 RTTI.
+:exclamation: **[Mandatory]** 禁止使用 RTTI.
 
 - 在运行时判断类型通常意味着设计问题. 如果你需要在运行期间确定一个对象的类型, 这通常说明你需要考虑重新设计你的类. 
 - 如果要实现根据子类类型来确定执行不同逻辑代码, 虚函数无疑更合适. 在对象内部就可以处理类型识别问题.
 - 如果要在对象外部的代码中判断类型, 考虑使用双重分派方案, 如访问者模式. 可以方便的在对象本身之外确定类的类型.
 
 ## 11.2. 代码可测试
-[Optional]如果发现编写的代码不太容易写单元测试，这通常意味着设计出了问题.
+:grey_exclamation: [Optional]如果发现编写的代码不太容易写单元测试，这通常意味着设计出了问题.
 ## 11.3. 面对对象
-[Optional]一个类里包含了太多的基础数据类型，这也意味着设计出了问题，因为有太多的业务耦合在一起.
+:grey_exclamation: [Optional]一个类里包含了太多的基础数据类型，这也意味着设计出了问题，因为有太多的业务耦合在一起.
 
 ## 11.4. 重视警告
-**[Mandatory]** 必须检查编译后产生的警告，切记！并解决掉该警告.
+:exclamation: **[Mandatory]** 必须检查编译后产生的警告，切记！并解决掉该警告.
 
 注：编译器有时已经对发生的bug进行了预警，不过很可惜被忽视了。
 
 # 12. 合法性
 ## 12.1. 接口函数入参合法性
-***[Mandatory]** 接口函数本身必须检查入参的合法性.
+*:exclamation: **[Mandatory]** 接口函数本身必须检查入参的合法性.
 
 ## 12.2. 使用断言
 应该始终记住：应该让程序在出现bug或非预期的错误的时候，应该让程序尽可能早地突然死亡。这样做可以帮助你在开发——测试循环中尽早地发现错误。使用断言来发现软件问题，提高代码可测性。
-**[Mandatory]** 对所调用函数的错误返回码要仔细、全面地处理.
+:exclamation: **[Mandatory]** 对所调用函数的错误返回码要仔细、全面地处理.
 注：为了获得健壮性，我们要接受代码大多数时候是在处理异常的事实。
 
-[Optional]尽可能使用断言检查非接口函数入参的合法性.
+:grey_exclamation: [Optional]尽可能使用断言检查非接口函数入参的合法性.
 
-[Optional]尽可能使用断言来检查系统没有定义的特性和功能.
+:grey_exclamation: [Optional]尽可能使用断言来检查系统没有定义的特性和功能.
 # 13. 可读性
 ## 13.1. 魔法数字(Magic Number)
-**[Mandatory]** 禁止使用不易理解的数字，用有enum或const代替.
+:exclamation: **[Mandatory]** 禁止使用不易理解的数字，用有enum或const代替.
 ## 13.2. 运算符优先级
-[Optional]尽可能使用括号来显式的表明表达式运算的优先级.
+:grey_exclamation: [Optional]尽可能使用括号来显式的表明表达式运算的优先级.
 ## 13.3. 可读性比效率重要
-[Optional]不要使用难懂的技巧性很高的语句，除非很有必要时.
+:grey_exclamation: [Optional]不要使用难懂的技巧性很高的语句，除非很有必要时.
 如:
 ```
 *p++ += 1;		// 等效于*p += 1; p++;
@@ -526,9 +526,9 @@ if (this_one_thing > this_other_thing
 ```
 注：在保证软件系统的正确性、稳定性、可读性及可测性的前提下，提高代码效率。
 ## 13.4. 局部变量还是公共变量
-[Optional]能用局部变量解决的问题，就没必要使用公共变量.
+:grey_exclamation: [Optional]能用局部变量解决的问题，就没必要使用公共变量.
 ## 13.5. 编写简短函数
-[Optional]倾向编写简短, 凝练的函数，函数函数不要超过100行
+:grey_exclamation: [Optional]倾向编写简短, 凝练的函数，函数函数不要超过100行
 
 我们承认长函数有时是合理的,  但当函数超过 40 行, 可以思索一下能不能在不影响程序结构的前提下对其进行分割.
 
@@ -536,7 +536,7 @@ if (this_one_thing > this_other_thing
 
 在处理代码时, 你可能会发现复杂的长函数. 不要害怕修改现有代码: 如果证实这些代码使用 / 调试困难, 或者你需要使用其中的一小段代码, 考虑将其分割为更加简短并易于管理的若干函数.
 ## 13.6. 函数自注释
-[Optional]函数仅完成一件功能.
+:grey_exclamation: [Optional]函数仅完成一件功能.
 
 为一两行代码即可完成的功能编写一个函数貌似没有必要，但却做到代码自注释，增加程序可读性。
 比如：
@@ -545,5 +545,5 @@ value = ( a > b ) ? a : b ;
 Value = max (a, b)
 ```
 ## 13.7. 圈复杂度
-**[Mandatory]** 尽可能减少函数的圈复杂度.
+:exclamation: **[Mandatory]** 尽可能减少函数的圈复杂度.
 注：我们简单的约定条件嵌套不允许超过三层。
